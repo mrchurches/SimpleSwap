@@ -38,9 +38,63 @@ Enables swapping a precise amount of an input token for an output token. The out
 - `getPrice`: Returns the spot price of one token in terms of the other, based on the current pool reserves.
 - `getAmountOut`: Calculates how many output tokens will be received for a given amount of input tokens.
 
-## Tech Stack
+Deployed contracts
 
-- **Solidity `^0.8.0`**: The smart contract is written in Solidity.
-- **OpenZeppelin Contracts**: Utilizes industry-standard and secure base contracts for `ERC20`, `Ownable`, and `SafeMath`.
-- **Remix IDE**: Used for development, testing, and initial deployment.
-- **Sepolia Testnet**: The contract is designed to be deployed and tested on the Sepolia test network.
+- Token A : 0xCD38A413F91d6892eB5bBEfaDb2b1CE427F0b65d
+- Verified on : https://sepolia.etherscan.io/address/0xCD38A413F91d6892eB5bBEfaDb2b1CE427F0b65d
+- Token B : 0x6D37971e8CF8B6fF59d004b9605c37A73a055FE5
+- Verified on : https://sepolia.etherscan.io/address/0x6D37971e8CF8B6fF59d004b9605c37A73a055FE5
+- SimpleSwap contract: 0xA9c08F13DD6404911D4E494d675Dc856C96C5780
+- Verified on : https://sepolia.etherscan.io/address/0xA9c08F13DD6404911D4E494d675Dc856C96C5780
+
+## Public Interface of SimpleSwap
+
+```solidity
+interface ISimpleSwap {
+    function addLiquidity(
+        address tokenA,
+        address tokenB,
+        uint256 amountADesired,
+        uint256 amountBDesired,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountA, uint256 amountB, uint256 liquidity);
+
+    function removeLiquidity(
+        address tokenA,
+        address tokenB,
+        uint256 liquidity,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountA, uint256 amountB);
+
+    function swapExactTokensForTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external;
+
+    function getPrice(address tokenA, address tokenB) external view returns (uint256 price);
+    function getAmountOut(address tokenIn, address tokenOut, uint256 amountIn) external view returns (uint256);
+}
+```
+
+## Contract Events
+
+- **AddLiquidity**  
+  `event AddLiquidity(address indexed user, address indexed tokenA, address indexed tokenB, uint256 amountA, uint256 amountB, uint256 liquidity);`  
+  _Emitted when a user adds liquidity to the pool._
+
+- **RemoveLiquidity**  
+  `event RemoveLiquidity(address indexed user, address indexed tokenA, address indexed tokenB, uint256 amountA, uint256 amountB, uint256 liquidity);`  
+  _Emitted when a user removes liquidity from the pool._
+
+- **Swap**  
+  `event Swap(address indexed user, address indexed fromToken, address indexed toToken, uint256 amountIn, uint256 amountOut);`  
+  _Emitted when a token swap is performed._
